@@ -1,7 +1,7 @@
 ---
 title: "Predicting Customer Loyalty"
 subtitle: "<br/> An Analysis on PeB CPS Data"
-author: "⚔ Roberta Distante - ADS Advanced Analytics"
+author: "Roberta Distante - ADS Advanced Analytics"
 date: "2018-10-25"
 output:
    xaringan::moon_reader:
@@ -12,11 +12,6 @@ output:
       countIncrementalSlides: false
       countdown: 120000
 ---
-
-```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE)
-```
-
 ```{r global.options, include = TRUE, echo=FALSE}
 knitr::opts_chunk$set(
     cache       = TRUE,     # if TRUE knitr will cache the results to reuse in future knits
