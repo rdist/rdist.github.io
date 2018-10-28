@@ -5,8 +5,7 @@ author: "Roberta Distante - ADS Advanced Analytics"
 date: "2018-10-25"
 output:
    xaringan::moon_reader:
-    chakra: "C:/Users/G54670/Documents/libs/remark-latest.min.js"
-    lib_dir: libs
+        lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
