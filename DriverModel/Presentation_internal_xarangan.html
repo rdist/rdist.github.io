@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Predicting Customer Loyalty</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Roberta Distante - ADS Advanced Analytics" />
+    <meta name="date" content="2018-10-25" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Predicting Customer Loyalty
+## <br/> An Analysis on PeB CPS Data
+### Roberta Distante - ADS Advanced Analytics
+### 2018-10-25
+
+---
+
+
+
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Presentation Outline
+
+1. Problem Definition 
+
+2. PeB CPS Data Characteristics 
+
+3. Analysis:
+
+   - Existing approach 
+   
+   - Best possible alternative
+
+---
+class: inverse, middle, center
+background-image: url(https://upload.wikimedia.org/wikipedia/commons/3/39/Naruto_Shiki_Fujin.svg)
+background-size: contain
+
+# Problem Definition
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Business Needs
+
+- Foster Nordea's Customer Experience (CX) plan to regain position as #1 
+
+- Secure that insights from the Customer Proposition Survey (CPS) are interpreted and used correctly and effectively to guide CX improvement
+
+- **Gain CX insights and produce actionable solutions**
+
+&lt;br/&gt;
+
+&gt; Nordea is in urgent need of setting up a customer loyalty predictive model to help identify actionable drivers that, integrated with other tools, could ease gaining competitive advantages produced from CX.
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Related Academic Literature
+
+- Emphasis on the utmost importance of trust and loyalty to survive in the financial sector
+
+- Customer satisfaction among the antecedents of customer trust and/or loyalty in the retail banking sector
+
+- In general, framework of hypotheses tested using survey data &amp; Structural Equation Models (SEM)
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Semantics
+
+- Measurement quality of fuzzy and complex concepts as satisfaction, trust and loyalty is **pivotal** 
+
+- The Net Promoter Score (also known as NPS) is the main metric used in business organizations to inform the management on how loyal the customer is
+
+&lt;br/&gt;
+
+&lt;img src="NPS.jpg" style="display: block; margin: auto;" /&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Main Disclaimer  
+
+- While NPS meets all the common requirements for a "useful" business metric (easy to measure, feels legitimate), many research papers debunk its myth 
+
+- NPS is computed on a question that on the surface seems to be about customer loyalty, but in reality only asks about recommending the company
+
+- Loyalty is a **multidimensional** concept, but Nordea's CPS data are collected with an NPS-based mindset: *de facto*, loyalty is based on a single-question metric 
+
+---
+class: inverse, middle, center
+background-image: url(https://upload.wikimedia.org/wikipedia/commons/3/39/Naruto_Shiki_Fujin.svg)
+background-size: contain
+
+#  PeB CPS Data 
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Quarterly Data Characteristics
+
+- Demographic and socio-economic self-stated status (age, gender, income class, higher education)
+
+- Up to 34 ordered response variables aimed at measuring the dimensions of service quality and relationship on a 1-7 scale
+
+- Three main questions on the "target" measures on a 0-10 scale (Recommendation, Satisfaction, Likelihood of being customer in medium term)
+
+- Main data-related problems:
+   - &lt;span style="color:blue"&gt;Survey design and representativeness questionable&lt;/span&gt; and &lt;span style="color:blue"&gt;lack of&lt;/span&gt; proper conceptual framework, hence &lt;span style="color:blue"&gt;proper measurements&lt;/span&gt; 
+   
+   - High share of "don't know": e.g., in Q1 2018 &lt;span style="color:blue"&gt;for some questions &gt; 50% &lt;/span&gt; and on average &gt; 15% [[Link to response distribution](#48)]
+   
+   - High level of missing items: e.g., in Q1 2018 only &lt;span style="color:blue"&gt;9.5% of complete cases&lt;/span&gt; and &lt;span style="color:blue"&gt;5,071 missing patterns on 14,583 observations&lt;/span&gt; 
+   
+  
+---
+class: inverse, middle, center
+background-image: url(https://upload.wikimedia.org/wikipedia/commons/3/39/Naruto_Shiki_Fujin.svg)
+background-size: contain
+
+# Analysis: Replicating the Existing Approach 
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+# Strategies to Cure Main Data Problems
+
+1. Treatment of "don't know" as item non-response `\(\implies\)` it adds up to missingness&lt;sup&gt;1&lt;/sup&gt;
+
+2. Expectation-Maximization (EM) algorithm used for treatment of missing data under the assumption of MAR: model the missing data mechanism and then proceed to make a proper likelihood-based analysis&lt;sup&gt;2&lt;/sup&gt; 
+
+   - [Link to "handling imputed data"](#43)
+   - Variables used in imputation: `age`, `gender`, `country`, `segment`, `main bank`, `education` + all questions&lt;sup&gt;3&lt;/sup&gt;
+   
+3. 0-10 scales reported to 1-7 using the following linear conversion: 
+`$$0 = 1 \text{ and } 10 = 7$$`
+`$$\text{target value} = 1/3 + 2/3 * \text{current scale value}$$`
+
+.footnote[
+[1] Respondents that have not completed the questionnaire excluded from data transfer.
+[2] `\(m\)` estimates of means and variances from `\(m\)` bootstrap samples used to draw `\(m\)` sets of imputed values by a form of regression analysis. 
+[3] Analysis made by external agency only uses model questions to produce `\(m=1\)` imputed samples.
+]
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+# Driver Model: Curse of Dimensionality 
+|&lt;font size="1"&gt;Brief description of variables&lt;/font&gt;|&lt;font size="1"&gt;Variable name&lt;/font&gt;|&lt;font size="1"&gt;Scale&lt;/font&gt;|&lt;font size="1"&gt;Construct&lt;/font&gt;|
+|----------------------------------------------------------------------------------------|----------------------|----------------------|----------------------|
+|&lt;font size="1"&gt; &lt;span style="color:blue"&gt; How likely is it that you would recommend Nordea to a friend or colleague?&lt;/span&gt;|&lt;font size="1"&gt;&lt;span style="color:blue"&gt;recommend&lt;/span&gt;&lt;/font&gt;|&lt;font size="1"&gt;0-10&lt;/span&gt;&lt;/font&gt;|&lt;font size="1"&gt;&lt;span style="color:blue"&gt;LOYALTY&lt;/span&gt;&lt;/font&gt;|
+|&lt;font size="1"&gt;&lt;span style="color:magenta"&gt;Nordea gives me value for money as a customer&lt;/span&gt;&lt;/font&gt;|&lt;font size="1"&gt;&lt;span style="color:magenta"&gt;value.for.money&lt;/span&gt;&lt;/font&gt;|&lt;font size="1"&gt;1-7&lt;/font&gt;|&lt;font size="1"&gt;&lt;span style="color:magenta"&gt;VALUE&lt;/span&gt;&lt;/font&gt;|
+|&lt;font size="1"&gt;&lt;span style="color:magenta"&gt;As a customer I benefit from Nordeas expertise&lt;/span&gt;&lt;/font&gt;|&lt;font size="1"&gt;&lt;span style="color:magenta"&gt;expertise.benefit&lt;/span&gt;&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;&lt;span style="color:magenta"&gt;VALUE&lt;/span&gt;&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea is always ready to help me when I really need it&lt;/font&gt;|&lt;font size="1"&gt;ready.to.help&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;personal_relationship&lt;/font&gt;|
+|&lt;font size="1"&gt;I always feel fairly treated by Nordea&lt;/font&gt;|&lt;font size="1"&gt;fairly.treated&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;personal_relationship&lt;/font&gt;|
+|&lt;font size="1"&gt;I feel appreciated as a customer at Nordea&lt;/font&gt;|&lt;font size="1"&gt;appreciated&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;personal_relationship&lt;/font&gt;|
+|&lt;font size="1"&gt;When I am in touch with Nordea I feel they recognize me and my needs as a customer&lt;/font&gt;|&lt;font size="1"&gt;recognized&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;personal_relationship&lt;/font&gt;|
+|&lt;font size="1"&gt;I always feel welcome at Nordea&lt;/font&gt;|&lt;font size="1"&gt;welcome&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;personal_relationship&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea contributes to society in a good way&lt;/font&gt;|&lt;font size="1"&gt;good.society.contribution&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;safe_and_trusted&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea offers inspiring solutions&lt;/font&gt;|&lt;font size="1"&gt;inspiring.solutions&lt;/font&gt;|&lt;font size="1"&gt;1-7&lt;/font&gt;|&lt;font size="1"&gt;prod_sol_serv&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea suggests solutions and products that suit my needs and economy&lt;/font&gt;|&lt;font size="1"&gt;fitting.solutions&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;prod_sol_serv&lt;/font&gt;|
+|&lt;font size="1"&gt;Having all the products and services I need&lt;/font&gt;|&lt;font size="1"&gt;have.all.needed&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;prod_sol_serv&lt;/font&gt;|
+&lt;center&gt;&lt;font size="0.5"&gt;Note: Bundled using mixed explorative and confirmatory FA via PCA on 0-100 range-standardized data (Pearson's corr.) &lt;/font&gt;&lt;/center&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+# Driver Model: Curse of Dimensionality 
+|&lt;font size="1"&gt;Brief description of variables&lt;/font&gt;|&lt;font size="1"&gt;Variable name&lt;/font&gt;|&lt;font size="1"&gt;Scale&lt;/font&gt;|&lt;font size="1"&gt;Construct&lt;/font&gt;|
+|----------------------------------------------------------------------------------------|----------------------|----------------------|----------------------|
+|&lt;font size="1"&gt;Nordea's mobile apps have the functionalities I need&lt;/font&gt;|&lt;font size="1"&gt;mobile.functionalities&lt;/font&gt;|&lt;font size="1"&gt;1-7 |&lt;font size="1"&gt;digital_sol&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea's mobile apps are simple and easy to use&lt;/font&gt;|&lt;font size="1"&gt;mobile.easy&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;digital_sol&lt;/font&gt;|
+|&lt;font size="1"&gt;It is a pleasure to use Nordea's mobile apps&lt;/font&gt;|&lt;font size="1"&gt;pleasure.mobile&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;digital_sol&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea's internet bank has the functionalites I need&lt;/font&gt;|&lt;font size="1"&gt;internet.functionalities&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;digital_sol&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea's internet bank is simple and easy to use&lt;/font&gt;|&lt;font size="1"&gt;internet.easy&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;digital_sol&lt;/font&gt;|
+|&lt;font size="1"&gt;When I call Nordea's contact centre they are able to help me&lt;/font&gt;|&lt;font size="1"&gt;help.contact.center&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;digital_sol&lt;/font&gt;|
+|&lt;font size="1"&gt;When I need advice, it is easy for me to get in contact with a relevant person in Nordea&lt;/font&gt;|&lt;font size="1"&gt;easy.get.contact&lt;/font&gt;|&lt;font size="1"&gt;1-7&lt;/font&gt;|&lt;font size="1"&gt;anywhere_anytime&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea is available by phone at times that suit me&lt;/font&gt;|&lt;font size="1"&gt;phone.availability&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;anywhere_anytime&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea's branches are accessible enough for me (opening hours and distance)&lt;/font&gt;|&lt;font size="1"&gt;branch.accessibility&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;anywhere_anytime&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea contacts me if and when there is something I can benefit from&lt;/font&gt;|&lt;font size="1"&gt;contact.to.benefit&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;relevant&lt;/font&gt;|
+|&lt;font size="1"&gt;When Nordea contacts me it is always relevant&lt;/font&gt;|&lt;font size="1"&gt;relevant.contact&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;relevant&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea often does more for me than I expect from them&lt;/font&gt;|&lt;font size="1"&gt;more.than.expected&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;relevant&lt;/font&gt;|
+&lt;center&gt;&lt;font size="0.5"&gt;Note: 6 questions excluded due to redundancy or inappropriateness.&lt;/font&gt;&lt;/center&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+# Driver Model: Curse of Dimensionality 
+|&lt;font size="1"&gt;Brief description of variables&lt;/font&gt;|&lt;font size="1"&gt;Variable name&lt;/font&gt;|&lt;font size="1"&gt;Scale&lt;/font&gt;|&lt;font size="1"&gt;Construct&lt;/font&gt;|
+|----------------------------------------------------------------------------------------|----------------------|----------------------|----------------------|
+|&lt;font size="1"&gt;Nordea processes matters quickly and without delay&lt;/font&gt;|&lt;font size="1"&gt;quickness&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;easy_to_deal&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea is easy to deal with&lt;/font&gt;|&lt;font size="1"&gt;easy.to.deal&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;easy_to_deal&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea communicates to me as a customer in an easy and simple way&lt;/font&gt;|&lt;font size="1"&gt;easy.communication&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;easy_to_deal&lt;/font&gt;|
+|&lt;font size="1"&gt;Competitive interest rates on savings accounts&lt;/font&gt;|&lt;font size="1"&gt;good.intrates.savings&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;fees_and_rates&lt;/font&gt;|
+|&lt;font size="1"&gt;Competitive mortgage rates/fees&lt;/font&gt;|&lt;font size="1"&gt;good.mortgage.rates&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;fees_and_rates&lt;/font&gt;|
+|&lt;font size="1"&gt;Competitive interest rates on other loans (not housing loans)&lt;/font&gt;|&lt;font size="1"&gt;good.intrates.other&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;fees_and_rates&lt;/font&gt;|
+|&lt;font size="1"&gt;Competitive fees for everyday banking&lt;/font&gt;|&lt;font size="1"&gt;good.fees.everyday&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;fees_and_rates&lt;/font&gt;|
+|&lt;font size="1"&gt;Competitive fees for investment&lt;/font&gt;|&lt;font size="1"&gt;good.fees.investments&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;fees_and_rates&lt;/font&gt;|
+|&lt;font size="1"&gt;Nordea helps me get a competitive return on my investments (e.g. stocks, bonds and funds)&lt;/font&gt;|&lt;font size="1"&gt;help.competitive.roi&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;fees_and_rates&lt;/font&gt;|
+|&lt;font size="1"&gt;How comfortable are you with using digital methods for more complex activities, like opening a loan or getting advice?&lt;/font&gt;|&lt;font size="1"&gt;pronness.to.digital&lt;/font&gt;|&lt;font size="1"&gt;1-7 &lt;/font&gt;|&lt;font size="1"&gt;fees_and_rates&lt;/font&gt;|
+&lt;center&gt;&lt;font size="0.5"&gt;Note: Decision on endogenous/exogenous variables is the product of estimation fine-tuning.&lt;/font&gt;&lt;/center&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Structural Equation Models
+
+- Easily address large numbers of variables - endogenous and exogenous
+
+- Among best integrated methods for measuring latent variables and assessing their structural relationships
+
+- Embed crucial characteristics in the study of customer satisfaction and loyalty, defined as such a complex, fuzzy and abstract concept 
+
+- Shortcoming: confirmative nature `\(\implies\)` context-dependency
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Structural Equation Models
+
+&lt;img src="path diagram.png" style="display: block; margin: auto;" /&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Our Structural Model
+
+&lt;img src="inner_plot.png" style="display: block; margin: auto;" /&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Loadings 
+
+&lt;img src="Presentation_internal_xarangan_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+&lt;center&gt;&lt;font size="0.5"&gt;Note: Based on PLS-PM. PLS algorithms coincide with standard algebraic solutions - usually involving an eigendecomposition.&lt;/font&gt;&lt;/center&gt;
+
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Partial Least Squares 
+
+- Soft-modeling technique to estimate structural equation models
+
+- Rooted in a couple of data model-building and computational ideas developed by Herman Wold in the 1960s
+
+- PLS methods have proven to be valuable on both theoretical and practical aspects
+
+- Provide a versatile platform for analyzing multiple relationships among one or more sets of variables - measured on some objects
+
+- Attractive features:
+    - deceptively &lt;span style="color:blue"&gt;simple iterative mechanisms&lt;/span&gt;
+    - &lt;span style="color:blue"&gt;ease of programming implementation&lt;/span&gt;
+    - estimation ideas anchored on the principle of least squares
+    - marked geometrical flavor of projection-based methods
+    - &lt;span style="color:blue"&gt;inherent dimension reduction nature&lt;/span&gt;
+    - rich possibilities for data visualization
+    - &lt;span style="color:blue"&gt;strong inductive spirit&lt;/span&gt;
+    - fit within statistical learning approaches
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Partial Least Squares 
+
+- Two main branches of PLS approaches: the **Path Modeling** branch and the **Regression branch**
+
+- The branches have produced two major movements that for the most part, have grown apart, remained disconnected; as of today a contemporary conciliatory culture has taken the best of both schools
+
+- PLS-PM is the Partial Least Squares approach to Structural Equation Modeling
+
+- PLS-PM is a statistical method for studying complex multivariate relationships among observed and latent variables
+
+- PLS-PM is a data analysis approach for studying a set of blocks of observed variables in which each block can be summarized by a latent variable and that linear relations exist between latent variables
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# What do we "calculate" in a PLS-PM? 
+
+- Estimation of the latent variable "scores"
+
+- Quantification of the relationships in the model
+
+PLS-PM sequential procedure stages:
+
+1. Get the weights to compute latent variable scores
+
+2. Estimate the "path coefficients" (inner model)
+
+3. Obtain the "loadings" (outer model)
+
+[Link to technical appendix](#44)
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Iterative Algorithm
+
+&lt;img src="algo.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# PLS-PM Assessment 
+
+Measurement models assessment:
+
+1. Unidimensionality (for Reflective Models)
+2. Loadings and Communalities
+3. Cross-loadings
+
+Structural model assessment:
+
+1. `\(R^{2}\)` determination coefficients
+2. Redundancy
+3. GoF
+
+Validation via bootstrap
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# To Wrap Up
+My Guess on Existing Analysis
+
+- Treat "don't know" option as unanswered (missing), excluding customers who did not complete the survey from the analysis *tout court*
+
+- Treat missingness as being MAR and use the EM (Expectation-Maximization) algorithm, transforming the data to be readable by the algorithm
+
+- Rescale response variables (1-7 and 0-10) to 0-100
+
+- Bundle indicator variables using judgement
+
+- Perform analysis on imputed samples, combine and weight
+
+- Weights computed using raking
+
+&lt;a href="https://nordea.sharepoint.com/sites/DMADS/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FDMADS%2FShared%20Documents%2FRoutine%2FFinal" target="_blank"&gt;My Routine&lt;/a&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+# Output of the Analysis
+
+- The model is estimated by country and by country-segment and weighting applied post estimation&lt;sup&gt;1&lt;/sup&gt;
+
+- An importance-performance map provides guidance for the prioritization
+
+- A one-unit point increase in performance (the score) of a dimension increases the performance the target (`LOYALTY`) by the value of the estimated total effect on the target (due to 0-100 range standardization)
+
+- The "performance" is the average value of the latent variable score: high values indicate a greater performance
+
+
+.footnote[
+[1] Weights based on age, country and segment + profitability. The method used to compute the weights from exernal agency unknown; we used raking and excluded weights greater than 5. Left with nesting it into profitability weighting.
+]
+
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Example of Output
+
+&lt;img src="output DK.png" style="display: block; margin: auto;" /&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Comparison of Outputs DK-FI: External vs. Internal
+
+&lt;img src="output_diff.png" style="display: block; margin: auto;" /&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Comparison of Internal Outputs DK-FI: Unweighted vs. Weighted
+
+&lt;img src="outputown_diff.png" style="display: block; margin: auto;" /&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Main Concerns over Existing Analysis 
+
+Model-wise:
+
+- Model validation shows insignificant coefficients
+
+- Some relationships are counter-intuitive (e.g. negative coefficient for `relevant` on `LOYALTY`)
+
+Data-wise:
+
+- Measurements
+
+- Details of weighting and imputation 
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Viable Alternatives?
+1. Attempt to improve the current analysis using same data: a two-step approach that combines Bayesian Networks (BN) and SEM
+
+2. Design a new end-to-end analysis that starts from conceiving a solid and consistent overarching framework: customer loyalty predictive model that employs a big data approach using attitudinal and behavioural data sources + customers' verbatim comments
+
+&gt; Option 1 seems the most feasible even in a short time span and could add further insights, in the worst case on why the experiment as it is fails at producing reliable and actionable results, in the best case improving the way data at hand are processed to that end
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# BN + SEM
+
+- Using SEM to study service &amp; relationship quality through customer perceptions is more than justified, **but** it has confirmative nature `\(\implies\)` expert knowledge + certain important relationships could be missed
+
+- The idea is then to use BN to explore the relationships between the dimensions which define the facets of satisfaction and loyalty related to SQ/RQ, followed by a second step which applies SEM to validate these relationships and the model as a whole
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# BN 
+
+- A BN is a framework for reasoning under uncertainty, and is widely used for representing uncertain knowledge
+
+- Quantitative component consisting of a joint probability distribution that factorizes into a set of conditional probability distributions, governed by the structure of a Directed Acyclic Graph (DAG)
+
+- BN can be defined as graphic models of the interactions between a set of variables, where the variables are represented as the nodes of a graph and the interactions (direct dependences) as directed links (also known as arcs and edges) between the nodes
+
+- The first step in a BN analysis is to learn both the structure, which has to be validated, and the parameters
+
+- I used an automatic learning approach where the structure of the BN is provided by algorithms which learn the structure using only one database (constraint-based, scored-based, hybrid)
+
+- Methodology explained in Cugnata et al. (2016) "Bayesian Networks in Survey Data: Robustness and Sensitivity Issues"
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# BN in Our Case
+
+- Curse of dimensionality is still an issue `\(\implies\)` dimensionality-reduction needed
+
+- PCA on ordinal data with polychoric correlations used as exploratory analysis reveals poor measures (constructs of max. 3 items and some indicators left out)
+
+- Robust BN structure found for both the latent constructs as in existing analysis and ones detected by PCA 
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+
+# BN in Our Case: "Judgement" Blocks
+&lt;embed src="C:/Users/G54670/Documents/Driver Model/BN and SEM/Analysis/BN/BN_unrestricted.pdf" width="100%" height="60%" style="display: block; margin: auto;" type="application/pdf" /&gt;
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+
+# BN in Our Case: "Judgement" Blocks
+&lt;embed src="C:/Users/G54670/Documents/Driver Model/BN and SEM/Analysis/BN/RobustBN_unrestricted.pdf" width="100%" height="60%" style="display: block; margin: auto;" type="application/pdf" /&gt;
+
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+
+# BN in Our Case: "Agnostic" Blocks
+&lt;embed src="C:/Users/G54670/Documents/Driver Model/BN and SEM/Analysis/Alternative/PCA driven/BN_unrestricted_alternative.pdf" width="100%" height="60%" style="display: block; margin: auto;" type="application/pdf" /&gt;
+
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+
+# BN in Our Case: "Agnostic" Blocks
+&lt;embed src="C:/Users/G54670/Documents/Driver Model/BN and SEM/Analysis/Alternative/PCA driven/RobustBN_unrestricted_alternative.pdf" width="100%" height="60%" style="display: block; margin: auto;" type="application/pdf" /&gt;
+
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+
+# BN in Our Case: "Agnostic" Blocks
+&lt;embed src="C:/Users/G54670/Documents/Driver Model/BN and SEM/Analysis/Alternative/PCA driven/NLPCA-RM action grid.pdf" width="100%" height="60%" style="display: block; margin: auto;" type="application/pdf" /&gt;
+
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Relationship Validation via SEM
+
+- SEM built using the dimension relationships obtained from the previous BN model
+
+- Goodness-of-fit parameters of the structural model help ascertain the validity of the model
+
+- All the relationships in the model tested in order to be significant at a pre-defined level of confidence. If not, they are removed
+
+- Specifically, Pairwise Likelihood Method for Multi-group Structural Equation Modelling with ordinal variables and data with missing values attempted on the two specifications  
+
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+
+
+#E.g. Multi-group SEM DK-FI on Agnostic Constructs
+&lt;embed src="C:/Users/G54670/Documents/Driver Model/BN and SEM/Analysis/Q1/Total/Ex4FittedMeasEquivModel_AC.pdf" width="100%" height="60%" style="display: block; margin: auto;" type="application/pdf" /&gt;
+
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle
+
+# Concluding Remarks
+
+- Data-related problems, including survey design, impact in a relevant manner on the final analysis output   
+
+- It is not clear whether the big estimated impact of `personal relationship` and `safe and trusted` on `LOYALTY` is simply the product of those constructs bearing a better quality in terms of embedded signal into predicting the target (e.g. because of no missingness to cure)
+
+- Methods tested are promising on better-quality data
+
+---
+class: inverse, middle, center
+background-image: url(https://upload.wikimedia.org/wikipedia/commons/3/39/Naruto_Shiki_Fujin.svg)
+background-size: contain
+
+# Appendix
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle, inverse
+
+# Best Practices When Imputing 
+
+&lt;img src="amelia.png" style="display: block; margin: auto;" /&gt;
+
+[Back to Analysis](#11)
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle, inverse
+
+# PLS-PM Formalized
+
+Structural Model - Inner Relationships
+
+1. Linear: `$$LV_{j}=\beta_{0}+\sum_{i\rightarrow j}\beta_{ji}LV_{i}+error_{j}$$`
+
+2. Recursive
+
+3. Predictor specification: `$$E[LV_{j}|LV_{i}]=\beta_{0i}+\sum_{i \rightarrow j}\beta_{ji}LV_{i}$$`
+   `$$cov(LV_{j},error_{j})=0$$`
+
+[Back to Analysis](#21)
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle, inverse
+
+# PLS-PM Formalized
+
+Measurement Model - Outer Relationships
+
+1. Reflective: The latent variable is considered to cause the manifest variables
+
+2. Formative: The manifest variables are considered to be the cause of the latent one
+
+3. Linear: `$$\text{reflective: }X_{jk}=\lambda_{0jk}+\lambda_{jk}LV_{j}+error_{jk}$$` 
+`$$\text{formative: }LV_{j}=\lambda_{0j}+\lambda_{jk}X_{jk}+error_{j}$$`
+
+4. Predictor specification: `$$\text{reflective: }E[X_{jk}|LV_{j}]=\lambda_{0jk}+\lambda_{jk}LV_{j}$$`
+`$$\text{formative: }E[LV_{j}|X_{jk}]=\lambda_{0j}+\lambda_{jk}X_{jk}$$`
+
+[Back to Analysis](#21)
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle, inverse
+
+# PLS-PM Algorithm
+
+1. Get the weights to compute the scores
+
+2. Estimate path coefficients (inner model)
+
+3. Obtain the loadings
+
+Stage 1 is an iterative process in which the ultimate goal is to get the weights 
+
+1. Initial arbitrary outer weights
+
+2. External estimation (standardization and sign ambiguity)
+
+3. Obtain inner weights: recalculate scores (choice of scheme among centroid, factor and path)
+
+4. Internal approximation
+
+5. Update outer weigths (choice between modes A and B)
+
+[Back to Analysis](#21)
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle, inverse
+
+# PLS-PM in Sum
+
+- The goal of PLS is to obtain score values of latent variables for prediction purposes 
+
+- The idea is to calculate estimates of latent variables as linear combinations of their associated indicators using a special linear combination
+
+- One looks for a linear combination in such a way that the obtained latent variables take into account the relationships of the structural and the measurement models in order to maximize the explained variance of the dependent variables (both latent and observed variables)
+
+- The core of the PLS algorithm is the calculation of the weights (for the linear combination) required to estimate the latent variables, based on how the structural and measurement models are specified
+
+[Back to Analysis](#21)
+
+---
+background-image: url("nordea.png")
+background-size: 70px
+background-position: 5% 98%
+class: middle, inverse
+
+# Distribution of Responses 
+
+&lt;img src="distr_other.png" style="display: block; margin: auto;" /&gt;
+
+[Back to Data](#9)
+    </textarea>
+<script src="C:/Users/G54670/Documents/libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(120000);</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
